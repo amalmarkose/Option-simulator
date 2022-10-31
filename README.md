@@ -9,6 +9,9 @@ The option chain will not fetch by default but only after the user hover over th
 
 Please use the name 'options' for the virtualenv. A startserver.bat file is provided to reduce the hustle of starting up the server. Please do the needed changes in the paths and you are good to go.
 
+Please note to run with 'Debug=True' as I have used static files. No copyrighted contents are used in this project.
+
+Happy trading!
 
 Main page.
 
