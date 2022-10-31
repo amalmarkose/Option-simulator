@@ -1,0 +1,7 @@
+{
+    "uid": "AM1395",
+    "factor2": "BPMPA2894C",
+    "vc": "AM1395_API",
+    "jKey": "714fddfe27cc175debd7ad0b85551e61b3959e59b612cbcdd0b34732015d9cd4",
+    "webSocketLogin": "{\"Status\":\"Success\",\"data\":{\"requestTime\":\"19:00:06 29-07-2022\",\"actid\":\"AM1395\",\"userName\":\"AMAL MARKOSE\",\"status\":\"Ok\",\"susertoken\":\"714fddfe27cc175debd7ad0b85551e61b3959e59b612cbcdd0b34732015d9cd4\",\"email\":\"amalmarkosevt@gmail.com\",\"orarr\":[\"MKT\",\"LMT\",\"SL-LMT\",\"SL-MKT\"],\"exarr\":[\"NFO\",\"BSE\",\"NSE\",\"NIPO\"]}}"
+}

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+  {% load static %}
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nifty Options Simulator</title>
+    <link rel="icon" type="image/x-icon" href='{% static "IMAGES/Options simulator-logos.jpeg" %}'>
+    <!-- Latest compiled and minified CSS -->
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+    />
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script
+    src="https://code.jquery.com/jquery-3.1.1.min.js"
+    integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+    crossorigin="anonymous"
+  ></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <!--custom js-->
+    <script type="text/javascript" src="../static/JS/myscript.js"></script>
+    <script type= "text/javascript" src='{% static "JS/myscript.js" %}'></script>
+    <script></script>
+    <!--custom css-->
+    <!-- <link rel="stylesheet" href="../static/CSS/style.css" /> -->
+    <link rel="stylesheet" href='{% static "CSS/style.css" %}'>
+    <!--chart js-->
+    <script>
+      
+    </script>
+  </head>
+  <body>
+    <!--nav bar-->
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="http://127.0.0.1:8000/tradesim/"><img src='{% static "IMAGES/Options simulator-logos.jpg" %}' alt="Options Simulator"></a>
+        </div>
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="http://127.0.0.1:8000/tradesim/">Trade</a></li>
+          <li><a href="http://127.0.0.1:8000/tradesim/alltrades">All Trades</a></li>
+          <li>
+            <a href="http://127.0.0.1:8000/tradesim/archived">Archives</a>
+          </li>
+          <li>
+            <button class="newbtn" onclick="openForm()">New Trade</button>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <div class="form-popup form-container" id="myForm">
+      <label><b>Strategy</b></label>
+      <input
+        id="newstrategy"
+        type="text"
+        placeholder="Enter strategy"
+        name="strategy"
+        required
+      />
+
+      <label><b>Expiry</b></label>
+      <input
+        id="newexpiry"
+        type="text"
+        value="{{data.0.expiry}}"
+        name="expiry"
+        required
+      />
+
+      <button type="button" onclick="newtrade()" class="btn">Create</button>
+      <button type="button" class="btn cancel" onclick="closeForm()">
+        Close
+      </button>
+    </div>
+
+    <main>
+      <!--headers-->
+      <div class="row head" id="displaydatafetch">
+       
+      </div>
+      <!--main body-->
+      <div class="row first">
+        <!--left pane-->
+        <div class="col-lg-7 leftpane">
+          <div class="row">
+            <div class="col-xs-12">
+              <h2>Dashboard ({{data.1.strategy}}, {{data.0.expiry}})</h2>
+            </div>
+          </div>
+          <!--details-->
+          <div class="row details" id="detailsfetch">
+
+            
+          </div>
+          <!--position title-->
+          <div class="row">
+            <div class="col-xs-12">
+              <h2>Positions</h2>
+            </div>
+          </div>
+          <!--positions builder-->
+          <div class="builder">
+            <!--position headers-->
+            <div class="row">
+              <div class="col-xs-1">
+                <p>B/S</p>
+              </div>
+              <div class="col-xs-1">
+                <p>Expiry</p>
+              </div>
+              <div class="col-xs-1">
+                <p>Strike</p>
+              </div>
+              <div class="col-xs-1">
+                <p>CE/PE</p>
+              </div>
+              <div class="col-xs-1">
+                <p>Lots</p>
+              </div>
+              <div class="col-xs-1">
+                <p>Entry</p>
+              </div>
+              <div class="col-xs-2">
+                <p>SL</p>
+              </div>
+              <div class="col-xs-1">
+                <p>Price</p>
+              </div>
+              <div class="col-xs-1">
+                <p>P/L</p>
+              </div>
+              <div class="col-xs-2">
+                <p>Sq.</p>
+              </div>
+            </div>
+            <!--position data-->
+          <div id="positionsfetch">
+            
+          </div>
+            <!--position footer-->
+            <div class="row">
+              <div class="col-xs-1">
+                <p></p>
+              </div>
+              <div class="col-xs-1">
+                <p></p>
+              </div>
+              <div class="col-xs-1">
+                <p></p>
+              </div>
+              <div class="col-xs-1">
+                <p style="text-align: right; font-weight: bold">Lots</p>
+              </div>
+              <div class="col-xs-1">
+                <p id="totallots"></p>
+              </div>
+              <div class="col-xs-2">
+                <p></p>
+              </div>
+              <div class="col-xs-2">
+                <p style="text-align: right; font-weight: bold">Total P/L</p>
+              </div>
+              <div class="col-xs-1">
+                <p id="totalpnl"></p>
+              </div>
+              <div class="col-xs-2">
+                <p>
+                  <button onclick="positionmodify('1','squareoffall')">
+                    <span class="glyphicon glyphicon-remove"></span>
+                  </button>
+                </p>
+              </div>
+            </div>
+          </div>
+          <!--Option Chain-->
+          <div class="row chain" id="chain">
+            <div class="col-xs-12">
+              <h2>Option chain</h2>
+              <p>{{data.0.expiry}}:</p>
+              <!--table-->
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>CALL</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th>PUT</th>
+                  </tr>
+                </thead>
+                <thead>
+                  <tr>
+                    <th>OI</th>
+                    <th>B/S</th>
+                    <th>LTP</th>
+                    <th>Strike</th>
+                    <th>LTP</th>
+                    <th>B/S</th>
+                    <th>OI</th>
+                  </tr>
+                </thead>
+                <!--chain elements-->
+                <tbody id="chainfetch">
+                  
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <!--right pane-->
+        <div class="col-lg-5 rightpane">
+          <!--chart-->
+          <div class="row">
+            <div class="col-xs-12">
+              <div id="chartContainer" style="width: 100%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--second row-->
+      <div class="row second">
+          <div class="col-lg-7">
+
+          </div>
+          <div class="col-lg-5" style="top: -200px;">
+          <!--strategy title-->
+          <div class="row">
+            <div class="col-xs-12">
+              <h2>Strategy builder</h2>
+            </div>
+          </div>
+          <!--strategy builder-->
+          <div class="builder">
+            <!--strategy headers-->
+            <div class="row">
+              <div class="col-xs-1">
+                <p>B/S</p>
+              </div>
+              <div class="col-xs-1">
+                <p>Expiry</p>
+              </div>
+              <div class="col-xs-3">
+                <p>Strike</p>
+              </div>
+              <div class="col-xs-1">
+                <p>CE/PE</p>
+              </div>
+              <div class="col-xs-3">
+                <p>Lots</p>
+              </div>
+              <div class="col-xs-1">
+                <p>Price</p>
+              </div> 
+              <div class="col-xs-2">
+                <p></p>
+              </div>
+            </div>
+            <!--strategy data-->
+            <div id="builderfetch">
+              
+            </div>
+            
+            
+          </div>
+          <!--strategy footer-->
+          <div class="row" style="text-align: right;">
+            <div class="col-xs-8"></div>
+            <div class="col-xs-2">
+              <button onclick="buildermodify('1','S','clear')" type="button" class="btn btn-warning">
+                Clear
+              </button>
+            </div>
+            <div class="col-xs-2">
+              <button onclick="addtoposition()" type="button" class="btn btn-success">
+                Add
+              </button>
+            </div>
+          </div>
+          </div>
+          </div>
+      </div>
+    </main>
+
+  </body>
+  <script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+  <script src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
+</html>

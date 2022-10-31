@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+  {% load static %}
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nifty Options Simulator - Archives</title>
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href='{% static "IMAGES/Options simulator-logos.jpeg" %}'
+    />
+    <!-- Latest compiled and minified CSS -->
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+    />
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.1.1.min.js"
+      integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <!--custom js-->
+    <script type="text/javascript" src="../static/JS/alltrades.js"></script>
+    <script
+      type="text/javascript"
+      src='{% static "JS/alltrades.js" %}'
+    ></script>
+    <script></script>
+    <!--custom css-->
+    <link rel="stylesheet" href="../static/CSS/style.css" />
+    <link rel="stylesheet" href='{% static "CSS/style.css" %}' />
+    <!--chart js-->
+    <script></script>
+  </head>
+  <body>
+    <!--nav bar-->
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="http://127.0.0.1:8000/tradesim/"
+            ><img
+              src='{% static "IMAGES/Options simulator-logos.jpg" %}'
+              alt="Options Simulator"
+          /></a>
+        </div>
+        <ul class="nav navbar-nav">
+          <li>
+            <a href="http://127.0.0.1:8000/tradesim/">Trade</a>
+          </li>
+          <li>
+            <a href="http://127.0.0.1:8000/tradesim/alltrades">All Trades</a>
+          </li>
+          <li class="active">
+            <a href="http://127.0.0.1:8000/tradesim/archived">Archives</a>
+          </li>
+          <li>
+            <button class="newbtn" onclick="openForm()">New Trade</button>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <div class="form-popup form-container" id="myForm">
+      <label><b>Strategy</b></label>
+      <input
+        id="newstrategy"
+        type="text"
+        placeholder="Enter strategy"
+        name="strategy"
+        required
+      />
+
+      <label><b>Expiry</b></label>
+      <input
+        id="newexpiry"
+        type="text"
+        value="{{data.0.expiry}}"
+        name="expiry"
+        required
+      />
+
+      <button type="button" onclick="newtrade()" class="btn">Create</button>
+      <button type="button" class="btn cancel" onclick="closeForm()">
+        Close
+      </button>
+    </div>
+
+    <main>
+      <div class="row">
+        {%for i in data.1.context%}
+        <div class="col-lg-4">
+          <div class="row">
+            <div class="col-lg-7">
+              <h2>Strategy: {{i.strategy}}</h2>
+              <h5>Created: {{i.createdon}}</h5>
+              <h5>Expiry: {{i.expiry}}</h5>
+            </div>
+            <div class="col-lg-5">
+              <a
+                href="http://127.0.0.1:8000/tradesim/trade/{{i.id}}/{{i.strategy}}/{{i.expiry}}"
+                style="text-decoration: none"
+                ><button type="button" class="btn btn-primary gtdbtn">
+                  Go to Trade
+                </button></a
+              >
+              <button
+                onclick="modifytrade('{{i.id}}','{{i.strategy}}','{{i.expiry}}','delete')"
+                type="button"
+                class="btn btn-danger dbtn"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+        {%endfor%}
+      </div>
+    </main>
+  </body>
+</html>

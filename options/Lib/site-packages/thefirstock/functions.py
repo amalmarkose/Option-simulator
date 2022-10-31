@@ -1,0 +1,660 @@
+import ast
+import json
+import requests
+
+from thefirstock.base import *
+from .operations.apiOperations import *
+
+from .Variables.enums import *
+from .Variables.fixedParams import *
+
+
+class ApiRequests(FirstockAPI):
+    def firstockLogin(self, uid: str, pwd: str, factor2: str, vc: str, apiKey: str):
+        """
+        :return: The json response
+        """
+        try:
+            url = LOGIN
+
+            payload = {
+                "userId": uid,
+                "password": pwd,
+                "DOBnPAN": factor2,
+                "vendorCode": vc,
+                "apiKey": apiKey
+            }
+
+            result = requests.post(url, json=payload)
+            jsonString = result.content.decode("utf-8")
+
+            finalResult = ast.literal_eval(jsonString)
+
+            if finalResult["Status"] == "Success":
+                dictionary = {
+                    "uid": uid,
+                    "factor2": factor2,
+                    "vc": vc,
+                    "jKey": finalResult["data"]["susertoken"],
+                    "webSocketLogin": jsonString
+                }
+
+                jsonObject = json.dumps(dictionary, indent=4)
+
+                with open("config.json", "w") as outfile:
+                    outfile.write(jsonObject)
+
+                return jsonString
+
+            else:
+                return jsonString
+
+        except Exception as e:
+            print(e)
+
+    def firstockClientDetails(self):
+        """
+        :return:
+        """
+        try:
+            url = USERDETAILS
+            with open("config.json") as file:
+                data = json.load(file)
+
+            uid = data["uid"]
+            jKey = data["jKey"]
+
+            payload = {
+                "userId": uid,
+                "jKey": jKey
+            }
+
+            result = requests.post(url, json=payload)
+            jsonString = result.content.decode("utf-8")
+
+            finalResult = ast.literal_eval(jsonString)
+
+            return finalResult
+
+        except Exception as e:
+            print(e)
+
+    def firstockLogout(self):
+        """
+        :return:
+        """
+        url = LOGOUT
+
+        with open("config.json") as file:
+            data = json.load(file)
+
+        uid = data["uid"]
+        jKey = data["jKey"]
+
+        payload = {
+            "userId": uid,
+            "jKey": jKey
+        }
+
+        result = requests.post(url, json=payload)
+        jsonString = result.content.decode("utf-8")
+
+        finalResult = ast.literal_eval(jsonString)
+
+        return finalResult
+
+    def firstockPlaceOrder(self, exch, tsym, qty, prc, prd, trantype, prctyp, ret, trgprc, remarks):
+        """
+        :return:
+        """
+        url = PLACEORDER
+
+        with open("config.json") as file:
+            data = json.load(file)
+
+        uid = data["uid"]
+        jKey = data["jKey"]
+
+        payload = {
+            "userId": uid,
+            "actid": uid,
+            "exchange": exch,
+            "tradingSymbol": tsym,
+            "quantity": qty,
+            "price": prc,
+            "product": prd,
+            "transactionType": trantype,
+            "priceType": prctyp,
+            "retention": ret,
+            "triggerPrice": trgprc,
+            "remarks": remarks,
+            "jKey": jKey
+        }
+
+        result = requests.post(url, json=payload)
+        jsonString = result.content.decode("utf-8")
+
+        finalResult = ast.literal_eval(jsonString)
+
+        return finalResult
+
+    def firstockGetOrderMargin(self, exch, tsym, qty, prc, prd, trantype, prctyp):
+        """
+        :return:
+        """
+        try:
+            url = ORDERMARGIN
+
+            with open("config.json") as file:
+                data = json.load(file)
+
+            uid = data["uid"]
+            jKey = data["jKey"]
+
+            payload = {
+                "userId": uid,
+                "actid": uid,
+                "exchange": exch,
+                "tradingSymbol": tsym,
+                "quantity": qty,
+                "price": prc,
+                "product": prd,
+                "transactionType": trantype,
+                "priceType": prctyp,
+                "jKey": jKey
+            }
+
+            result = requests.post(url, json=payload)
+            jsonString = result.content.decode("utf-8")
+
+            finalResult = ast.literal_eval(jsonString)
+
+            return finalResult
+
+        except Exception as e:
+            print(e)
+
+    def firstockOrderBook(self):
+        """
+        :return:
+        """
+        try:
+            url = ORDERBOOK
+
+            with open("config.json") as file:
+                data = json.load(file)
+
+            uid = data["uid"]
+            jKey = data["jKey"]
+
+            payload = {
+                "userId": uid,
+                "jKey": jKey
+            }
+
+            result = requests.post(url, json=payload)
+            jsonString = result.content.decode("utf-8")
+
+            finalResult = ast.literal_eval(jsonString)
+
+            return finalResult
+
+        except Exception as e:
+            print(e)
+
+    def firstockCancelOrder(self, norenordno):
+        """
+        :return:
+        """
+        try:
+            url = CANCELORDER
+
+            with open("config.json") as file:
+                data = json.load(file)
+
+            uid = data["uid"]
+            jKey = data["jKey"]
+
+            payload = {
+                "userId": uid,
+                "norenordno": norenordno,
+                "jKey": jKey
+            }
+
+            result = requests.post(url, json=payload)
+            jsonString = result.content.decode("utf-8")
+
+            finalResult = ast.literal_eval(jsonString)
+
+            return finalResult
+
+        except Exception as e:
+            print(e)
+
+    def firstockModifyOrder(self, qty, norenordno, trgprc, prc, exchange, tradingSymbol, priceType):
+        """
+        :return:
+        """
+        try:
+            url = MODIFYORDER
+
+            with open("config.json") as file:
+                data = json.load(file)
+
+            uid = data["uid"]
+            jKey = data["jKey"]
+
+            payload = {
+                "userId": uid,
+                "norenordno": norenordno,
+                "quantity": qty,
+                "price": prc,
+                "triggerPrice": trgprc,
+                "exchange": exchange,
+                "tradingSymbol": tradingSymbol,
+                "priceType": priceType,
+                "jKey": jKey
+            }
+
+            result = requests.post(url, json=payload)
+            jsonString = result.content.decode("utf-8")
+
+            finalResult = ast.literal_eval(jsonString)
+
+            return finalResult
+
+        except Exception as e:
+            print(e)
+
+    def firstockSingleOrderHistory(self, norenordno):
+        """
+        :return:
+        """
+        try:
+            url = SINGLEORDERHISTORY
+
+            with open("config.json") as file:
+                data = json.load(file)
+
+            uid = data["uid"]
+            jKey = data["jKey"]
+
+            payload = {
+                "userId": uid,
+                "norenordno": norenordno,
+                "jKey": jKey
+            }
+
+            result = requests.post(url, json=payload)
+            jsonString = result.content.decode("utf-8")
+
+            finalResult = ast.literal_eval(jsonString)
+
+            return finalResult
+
+        except Exception as e:
+            print(e)
+
+    def firstockTradeBook(self):
+        """
+        :return:
+        """
+        try:
+            url = TRADEBOOK
+
+            with open("config.json") as file:
+                data = json.load(file)
+
+            uid = data["uid"]
+            jKey = data["jKey"]
+
+            payload = {
+                "userId": uid,
+                "actid": uid,
+                "jKey": jKey
+            }
+
+            result = requests.post(url, json=payload)
+            jsonString = result.content.decode("utf-8")
+
+            finalResult = ast.literal_eval(jsonString)
+
+            return finalResult
+
+        except Exception as e:
+            print(e)
+
+    def firstockPositionBook(self):
+        """
+        :return:
+        """
+        try:
+
+            url = POSITIONBOOK
+
+            with open("config.json") as file:
+                data = json.load(file)
+
+            uid = data["uid"]
+            jKey = data["jKey"]
+
+            payload = {
+                "userId": uid,
+                "actid": uid,
+                "jKey": jKey
+            }
+
+            result = requests.post(url, json=payload)
+            jsonString = result.content.decode("utf-8")
+
+            finalResult = ast.literal_eval(jsonString)
+
+            return finalResult
+
+        except Exception as e:
+            print(e)
+
+    def firstockConvertProduct(self, exch, tsym, qty, prd, prevprd, trantype, postype):
+        """
+        :return:
+        """
+        try:
+            url = PRODUCTCONVERSION
+
+            with open("config.json") as file:
+                data = json.load(file)
+
+            uid = data["uid"]
+            jKey = data["jKey"]
+
+            payload = {
+                "userId": uid,
+                "exchange": exch,
+                "tradingSymbol": tsym,
+                "quantity": qty,
+                "actid": uid,
+                "product": prd,
+                "previousProduct": prevprd,
+                "transactionType": trantype,
+                "positionType": postype,
+                "jKey": jKey
+            }
+
+            result = requests.post(url, json=payload)
+            jsonString = result.content.decode("utf-8")
+
+            finalResult = ast.literal_eval(jsonString)
+
+            return finalResult
+
+        except Exception as e:
+            print(e)
+
+    def firstockHoldings(self):
+        """
+        :return:
+        """
+        try:
+            url = HOLDINGS
+
+            with open("config.json") as file:
+                data = json.load(file)
+
+            uid = data["uid"]
+            jKey = data["jKey"]
+
+            payload = {
+                "userId": uid,
+                "actid": uid,
+                "product": "C",
+                "jKey": jKey
+            }
+
+            result = requests.post(url, json=payload)
+            jsonString = result.content.decode("utf-8")
+
+            finalResult = ast.literal_eval(jsonString)
+
+            return finalResult
+
+        except Exception as e:
+            print(e)
+
+    def firstockLimits(self):
+        """
+        :return:
+        """
+        try:
+
+            url = LIMITS
+
+            with open("config.json") as file:
+                data = json.load(file)
+
+            uid = data["uid"]
+            jKey = data["jKey"]
+
+            payload = {
+                "userId": uid,
+                "actid": uid,
+                "jKey": jKey
+            }
+
+            result = requests.post(url, json=payload)
+            jsonString = result.content.decode("utf-8")
+
+            finalResult = ast.literal_eval(jsonString)
+
+            return finalResult
+
+        except Exception as e:
+            print(e)
+
+    def firstockGetQuotes(self, exch, token):
+        """
+        :return:
+        """
+        try:
+            url = GETQUOTES
+
+            with open("config.json") as file:
+                data = json.load(file)
+
+            uid = data["uid"]
+            jKey = data["jKey"]
+
+            payload = {
+                "userId": uid,
+                "exchange": exch,
+                "token": token,
+                "jKey": jKey
+            }
+
+            result = requests.post(url, json=payload)
+            jsonString = result.content.decode("utf-8")
+
+            finalResult = ast.literal_eval(jsonString)
+
+            return finalResult
+
+        except Exception as e:
+            print(e)
+
+    def firstockSearchScrips(self, stext):
+        """
+        :return:
+        """
+        try:
+            url = SEARCHSCRIPS
+
+            with open("config.json") as file:
+                data = json.load(file)
+
+            uid = data["uid"]
+            jKey = data["jKey"]
+
+            payload = {
+                "userId": uid,
+                "stext": stext,
+                "jKey": jKey
+            }
+
+            result = requests.post(url, json=payload)
+            jsonString = result.content.decode("utf-8")
+
+            finalResult = ast.literal_eval(jsonString)
+
+            return finalResult
+
+        except Exception as e:
+            print(e)
+
+    def firstockGetSecurityInfo(self, exch, token):
+        """
+        :return:
+        """
+        try:
+            url = GETSECURITYINFO
+
+            with open("config.json") as file:
+                data = json.load(file)
+
+            uid = data["uid"]
+            jKey = data["jKey"]
+
+            payload = {
+                "userId": uid,
+                "exchange": exch,
+                "token": token,
+                "jKey": jKey
+            }
+
+            result = requests.post(url, json=payload)
+            jsonString = result.content.decode("utf-8")
+
+            finalResult = ast.literal_eval(jsonString)
+
+            return finalResult
+
+        except Exception as e:
+            print(e)
+
+    def firstockGetIndexList(self, exch):
+        """
+        :return:
+        """
+        try:
+            url = GETINDEXLIST
+
+            with open("config.json") as file:
+                data = json.load(file)
+
+            uid = data["uid"]
+            jKey = data["jKey"]
+
+            payload = {
+                "userId": uid,
+                "exchange": exch,
+                "jKey": jKey
+            }
+
+            result = requests.post(url, json=payload)
+            jsonString = result.content.decode("utf-8")
+
+            finalResult = ast.literal_eval(jsonString)
+
+            return finalResult
+
+        except Exception as e:
+            print(e)
+
+    def firstockGetOptionChain(self, tsym, exch, strprc, cnt):
+        """
+        :return:
+        """
+        url = GETOPTIONCHAIN
+
+        with open("config.json") as file:
+            data = json.load(file)
+
+        uid = data["uid"]
+        jKey = data["jKey"]
+
+        payload = {
+            "userId": uid,
+            "exchange": exch,
+            "tradingSymbol": tsym,
+            "strikePrice": strprc,
+            "count": cnt,
+            "jKey": jKey
+        }
+
+        result = requests.post(url, json=payload)
+        jsonString = result.content.decode("utf-8")
+
+        finalResult = ast.literal_eval(jsonString)
+
+        return finalResult
+
+    def firstockSpanCalculator(self, exch, instname, symname, expd, optt, strprc, netqty, buyqty, sellqty, product):
+        """
+        :return:
+        """
+        url = SPANCALCULATOR
+
+        with open("config.json") as file:
+            data = json.load(file)
+
+        uid = data["uid"]
+        jKey = data["jKey"]
+
+        payload = {
+            "userId": uid,
+            "actid": uid,
+            "exchange": exch,
+            "instname": instname,
+            "symbolName": symname,
+            "expd": expd,
+            "optt": optt,
+            "strikePrice": strprc,
+            "netQuantity": netqty,
+            "buyQuantity": buyqty,
+            "sellQuantity": sellqty,
+            "product": product,
+            "jKey": jKey
+        }
+
+        result = requests.post(url, json=payload)
+        jsonString = result.content.decode("utf-8")
+
+        finalResult = ast.literal_eval(jsonString)
+
+        return finalResult
+
+    def firstockTimePriceSeries(self, exch, token, et, st):
+        """
+        :return:
+        """
+        url = TIMEPRICESERIES
+
+        with open("config.json") as file:
+            data = json.load(file)
+
+        uid = data["uid"]
+        jKey = data["jKey"]
+
+        payload = {
+            "userId": uid,
+            "exchange": exch,
+            "token": token,
+            "endtime": et,
+            "starttime": st,
+            "jKey": jKey
+        }
+
+        result = requests.post(url, json=payload)
+        jsonString = result.content.decode("utf-8")
+
+        finalResult = ast.literal_eval(jsonString)
+
+        return finalResult

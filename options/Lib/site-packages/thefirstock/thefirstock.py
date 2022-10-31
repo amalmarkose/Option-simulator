@@ -1,0 +1,405 @@
+from thefirstock.execution import *
+
+from enum import Enum
+from typing import List, Optional
+from datetime import date, datetime
+
+from thefirstock.pyClient import Client
+from thefirstock.pyClient.utils.encoders import date_encoder
+from thefirstock.pyClient.utils.encoders import password_hash_encoder
+from pydantic import BaseModel, IPvAnyAddress, EmailStr, SecretStr, root_validator
+from thefirstock.pyClient.utils.decoders import build_loader, timestamp_decoder, datetime_decoder
+
+API_URL = r'https://norenapi.thefirstock.com/NorenWClientTP/'
+SOCKET_URL = r'wss://norenapi.thefirstock.com/NorenWSTP/'
+
+try:
+    client = Client(api_url=API_URL, socket_url=SOCKET_URL)
+except Exception as e:
+    print(e)
+
+
+class ResponseStatus(str, Enum):
+    OK = 'Ok'
+    NOT_OK = 'Not_Ok'
+
+
+class LoginRequestModel(BaseModel):
+    apkversion: Optional[str] = "1.0.0"
+
+    uid: str
+
+    pwd: Optional[SecretStr]
+
+    dpin: Optional[SecretStr]
+
+    factor2: str
+
+    vc: str
+
+    appkey: str
+
+    imei: Optional[str] = "12345"
+
+    addldivinf: Optional[str]
+
+    ipaddr: Optional[IPvAnyAddress]
+
+    source: Optional[str] = "API"
+
+    @root_validator(allow_reuse=True)
+    def validate(cls, values: dict):
+        pwd_is_present = values.get('pwd') is not None
+        dpin_is_present = values.get('dpin') is not None
+        valid = pwd_is_present or dpin_is_present
+        if not valid:
+            raise ValueError('Either pwd or dpin should be present')
+        return values
+
+    class Config:
+        json_encoders = {
+            date: date_encoder(),
+            SecretStr: password_hash_encoder()
+        }
+
+
+class LoginResponseModel(BaseModel):
+    stat: ResponseStatus = ResponseStatus.OK
+
+    susertoken: Optional[str]
+
+    lastaccesstime: Optional[datetime]
+
+    request_time: Optional[datetime]
+
+    spasswordreset: Optional[str]
+
+    exarr: Optional[List[str]]
+
+    uname: Optional[str]
+
+    actid: Optional[str]
+
+    email: Optional[EmailStr]
+
+    brkname: Optional[str]
+
+    emsg: Optional[str]
+
+    class Config:
+        json_loads = build_loader({
+            "lastaccesstime": timestamp_decoder(),
+            "request_time": datetime_decoder()
+        })
+
+
+def webSocketLogin():
+    with open("config.json") as file:
+        data = json.load(file)
+
+    result = data["webSocketLogin"]
+    credentials = LoginResponseModel.parse_raw(result)
+    client.login(credentials)
+
+    return client
+
+
+def firstock_login(userId, password, DOBnPAN, vendorCode, apiKey):
+    try:
+        login = FirstockLogin(
+            uid=userId,
+            pwd=password,
+            factor2=DOBnPAN,
+            vc=vendorCode,
+            apiKey=apiKey,
+        )
+
+        result = login.firstockLogin()
+
+        return result
+
+    except Exception as e:
+        print(e)
+
+
+def firstock_userDetails():
+    try:
+
+        clientDetails = FirstockClientDetails().firstockClientDetails()
+        return clientDetails
+
+    except Exception as e:
+        print(e)
+
+
+def firstock_logout():
+    try:
+
+        logout = FirstockLogout().firstockLogout()
+        return logout
+
+    except Exception as e:
+        print(e)
+
+
+def firstock_placeOrder(exchange, tradingSymbol, quantity, price, product, transactionType,
+                        priceType, retention, triggerPrice, remarks):
+    try:
+        placeOrder = FirstockPlaceOrder(
+            exch=exchange,
+            tsym=tradingSymbol,
+            qty=quantity,
+            prc=price,
+            prd=product,
+            trantype=transactionType,
+            prctyp=priceType,
+            ret=retention,
+            trgprc=triggerPrice,
+            remarks=remarks
+        ).firstockPlaceOrder()
+
+        return placeOrder
+    except Exception as e:
+        print(e)
+
+
+def firstock_orderMargin(exchange, tradingSymbol, quantity, price, product, transactionType, priceType):
+    try:
+        orderMargin = FirstockGetOrderMargin(
+            exch=exchange,
+            tsym=tradingSymbol,
+            qty=quantity,
+            prc=price,
+            prd=product,
+            trantype=transactionType,
+            prctyp=priceType,
+        ).firstockGetOrderMargin()
+
+        return orderMargin
+
+    except Exception as e:
+        print(e)
+
+
+def firstock_orderBook():
+    try:
+        orderBook = FirstockOrderBook().firstockOrderBook()
+
+        return orderBook
+
+    except Exception as e:
+        print(e)
+
+
+def firstock_cancelOrder(norenordno):
+    try:
+        cancelOrder = FirstockCancelOrder(
+            norenordno=norenordno
+        ).firstockCancelOrder()
+
+        return cancelOrder
+
+    except Exception as e:
+        print(e)
+
+
+def firstock_ModifyOrder(quantity, norenordno, triggerPrice, price, exchange, tradingSymbol, priceType):
+    try:
+
+        modifyOrder = FirstockModifyOrder(
+            qty=quantity,
+            norenordno=norenordno,
+            trgprc=triggerPrice,
+            prc=price,
+            exchange=exchange,
+            tradingSymbol=tradingSymbol,
+            priceType=priceType
+        ).firstockModifyOrder()
+
+        return modifyOrder
+
+    except Exception as e:
+        print(e)
+
+
+def firstock_SingleOrderHistory(norenordno):
+    try:
+        singleOrderHistory = FirstockSingleOrderHistory(
+            norenordno=norenordno
+        ).firstockSingleOrderHistory()
+
+        return singleOrderHistory
+
+    except Exception as e:
+        print(e)
+
+
+def firstock_TradeBook():
+    try:
+
+        tradeBook = FirstockTradeBook().firstockTradeBook()
+
+        return tradeBook
+
+    except Exception as e:
+        print(e)
+
+
+def firstock_PositionBook():
+    try:
+
+        positionBook = FirstockPositionBook().firstockPositionBook()
+
+        return positionBook
+
+    except Exception as e:
+        print(e)
+
+
+def firstock_ConvertProduct(exchange, tradingSymbol, quantity, product, previousProduct, transactionType, positionType):
+    try:
+
+        convertProduct = FirstockConvertProduct(
+            exch=exchange,
+            tsym=tradingSymbol,
+            qty=quantity,
+            prd=product,
+            prevprd=previousProduct,
+            trantype=transactionType,
+            postype=positionType
+        ).firstockConvertProduct()
+
+        return convertProduct
+
+    except Exception as e:
+        print(e)
+
+
+def firstock_Holding():
+    try:
+
+        holding = FirstockHoldings().firstockHoldings()
+
+        return holding
+
+    except Exception as e:
+        print(e)
+
+
+def firstock_Limits():
+    try:
+
+        limits = FirstockLimits().firstockLimits()
+
+        return limits
+
+    except Exception as e:
+        print(e)
+
+
+def firstock_GetQuotes(exchange, token):
+    try:
+        getQuotes = FirstockGetQuotes(
+            exch=exchange,
+            token=token
+        ).firstockGetQuotes()
+
+        return getQuotes
+
+    except Exception as e:
+        print(e)
+
+
+def firstock_SearchScrips(stext):
+    try:
+
+        searchScrips = FirstockSearchScrips(
+            stext=stext
+        ).firstockSearchScrips()
+
+        return searchScrips
+
+    except Exception as e:
+        print(e)
+
+
+def firstock_SecurityInfo(exchange, token):
+    try:
+
+        securityInfo = FirstockGetSecurityInfo(
+            exch=exchange,
+            token=token
+        ).firstockGetSecurityInfo()
+
+        return securityInfo
+
+    except Exception as e:
+        print(e)
+
+
+def firstock_IndexList(exchange):
+    try:
+
+        indexList = FirstockGetIndexList(
+            exch=exchange
+        ).firstockGetIndexList()
+
+        return indexList
+
+    except Exception as e:
+        print(e)
+
+
+def firstock_OptionChain(tradingSymbol, exchange, strikePrice, count):
+    try:
+
+        optionChain = FirstockGetOptionChain(
+            tsym=tradingSymbol,
+            exch=exchange,
+            strprc=strikePrice,
+            cnt=count
+        ).firstockGetOptionChain()
+
+        return optionChain
+
+    except Exception as e:
+        print(e)
+
+
+def firstock_SpanCalculator(exchange, instname, symbolName, expd, optt, strikePrice, netQuantity, buyQuantity,
+                            sellQuantity, product):
+    try:
+
+        spanCalculator = FirstockSpanCalculator(
+            exch=exchange,
+            instname=instname,
+            symname=symbolName,
+            expd=expd,
+            optt=optt,
+            strprc=strikePrice,
+            netqty=netQuantity,
+            buyqty=buyQuantity,
+            sellqty=sellQuantity,
+            product=product
+        ).firstockSpanCalculator()
+
+        return spanCalculator
+
+    except Exception as e:
+        print(e)
+
+
+def firstock_TimePriceSeries(exchange, token, endTime, startTime):
+    try:
+
+        timePrice = FirstockTimePriceSeries(
+            exch=exchange,
+            token=token,
+            et=endTime,
+            st=startTime
+        ).firstockTimePriceSeries()
+
+        return timePrice
+
+    except Exception as e:
+        print(e)

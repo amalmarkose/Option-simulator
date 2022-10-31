@@ -1,0 +1,46 @@
+"""
+URLS for FIRSTOCK API
+"""
+
+"""Login"""
+LOGIN = 'https://connect.thefirstock.com/api/login'
+
+USERDETAILS = "https://connect.thefirstock.com/api/userDetails"
+
+LOGOUT = "https://connect.thefirstock.com/api/logout"
+
+PLACEORDER = "https://connect.thefirstock.com/api/placeOrder"
+
+ORDERMARGIN = "https://connect.thefirstock.com/api/orderMargin"
+
+ORDERBOOK = "https://connect.thefirstock.com/api/orderBook"
+
+CANCELORDER = "https://connect.thefirstock.com/api/cancelOrder"
+
+MODIFYORDER = "https://connect.thefirstock.com/api/modifyOrder"
+
+SINGLEORDERHISTORY = "https://connect.thefirstock.com/api/singleOrderHistory"
+
+TRADEBOOK = "https://connect.thefirstock.com/api/tradeBook"
+
+POSITIONBOOK = "https://connect.thefirstock.com/api/positionBook"
+
+PRODUCTCONVERSION = "https://connect.thefirstock.com/api/productConversion"
+
+HOLDINGS = "https://connect.thefirstock.com/api/holding"
+
+LIMITS = "https://connect.thefirstock.com/api/limit"
+
+GETQUOTES = "https://connect.thefirstock.com/api/getQuotes"
+
+SEARCHSCRIPS = "https://connect.thefirstock.com/api/searchScrips"
+
+GETSECURITYINFO = "https://connect.thefirstock.com/api/securityInfo"
+
+GETINDEXLIST = "https://connect.thefirstock.com/api/indexList"
+
+GETOPTIONCHAIN = "https://connect.thefirstock.com/api/optionChain"
+
+SPANCALCULATOR = "https://connect.thefirstock.com/api/spanCalculators"
+
+TIMEPRICESERIES = "https://connect.thefirstock.com/api/timePriceSeries"
