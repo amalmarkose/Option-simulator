@@ -8,9 +8,6 @@ The 'optionchain' table in DB need to be populated in advance WITH 40 rows, plea
 The option chain will not fetch by default but only after the user hover over the option chain div. This was done to reduce load on DB.
 Manually enter the expiry date when creating new trade in the format '03NOV22'.
 
-Please use the name 'options' for the virtualenv. A startserver.bat file is provided to reduce the hustle of starting up the server. Please do the needed changes in the paths and you are good to go.
-
-Please note to run with 'Debug=True' as I have used static files. No copyrighted contents are used in this project.
 
 Happy trading!
 
